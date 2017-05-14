@@ -34,6 +34,7 @@ public class CardGame extends JPanel{
   }
   public void deal_Card(boolean is_mine,int nums){
     Random rnd = new Random();
+
     if(is_mine){
       for(int i=0;i<nums;i++){
         myCards.add(new Card(rnd.nextInt(51)));
@@ -57,50 +58,60 @@ public class CardGame extends JPanel{
     //画面遷移の表現
     switch (view){
       case 0:
-        g.setColor(bg);
-        g.fillRect(0,0,getWidth(), getHeight());
-        g.setColor(cha);
-        drawStringCenter(g,"BlackJack!!",getWidth()/2,getHeight()/2);
-        drawStringCenter(g,"press any key to start",getWidth()/2,getHeight()/2+15);
+        startView(g,bg,cha);
         break;
       case 1:
-        //背景処理
-        g.setColor(bg);
-        g.fillRect(0,0,getWidth(), getHeight());
-        g.setColor(cha);
-        g.drawString("現在の合計 : " + myCardSum, 200, 170);
-        g.drawString("Press Up to HIT.",200,190);
-        g.drawString("Press Down to Stand.",200,210);
-        drawTrump(g);
+        gameView(g,bg,cha);
         break;
       case 2:
-        //ペアのカードも全部表向きに
-        for (int i = 0; i < pairCardNum; i++) {
-          pairCards.get(i).front = true;
-        }
-        g.setColor(bg);
-        g.fillRect(0,0,getWidth(), getHeight());
-        g.setColor(cha);
-        drawTrump(g);
-        drawStringCenter(g,""+myCardSum + "vs" + pairCardSum+"", getWidth()/2,getHeight()/2-15);
-        switch(isWin){
-          case -1:
-          drawStringCenter(g,"YOU LOSE...", getWidth()/2,getHeight()/2);
-          break;
-          case 0:
-          drawStringCenter(g,"DRAW", getWidth()/2,getHeight()/2);
-          break;
-          case 1:
-          drawStringCenter(g,"YOU WIN!!", getWidth()/2,getHeight()/2);
-          break;
-          default:
-          break;
-        }
-        drawStringCenter(g,"Press any key to continue...", getWidth()/2,getHeight()/2 +15);
+        resultView(g,bg,cha);
         break;
       default:
         break;
     }
+  }
+
+  //各画面ごとの処理
+  public void startView(Graphics g,Color bg, Color cha){
+    g.setColor(bg);
+    g.fillRect(0,0,getWidth(), getHeight());
+    g.setColor(cha);
+    drawStringCenter(g,"BlackJack!!",getWidth()/2,getHeight()/2);
+    drawStringCenter(g,"press any key to start",getWidth()/2,getHeight()/2+15);
+  }
+  public void gameView(Graphics g,Color bg, Color cha){
+    g.setColor(bg);
+    g.fillRect(0,0,getWidth(), getHeight());
+    g.setColor(cha);
+    g.drawString("現在の合計 : " + myCardSum, 200, 170);
+    g.drawString("Press Up to HIT.",200,190);
+    g.drawString("Press Down to Stand.",200,210);
+    drawTrump(g);
+  }
+  public void resultView(Graphics g,Color bg, Color cha){
+    //ペアのカードも全部表向きに
+    for (int i = 0; i < pairCardNum; i++) {
+      pairCards.get(i).front = true;
+    }
+    g.setColor(bg);
+    g.fillRect(0,0,getWidth(), getHeight());
+    g.setColor(cha);
+    drawTrump(g);
+    drawStringCenter(g,""+myCardSum + "vs" + pairCardSum+"", getWidth()/2,getHeight()/2-15);
+    switch(isWin){
+      case -1:
+      drawStringCenter(g,"YOU LOSE...", getWidth()/2,getHeight()/2);
+      break;
+      case 0:
+      drawStringCenter(g,"DRAW", getWidth()/2,getHeight()/2);
+      break;
+      case 1:
+      drawStringCenter(g,"YOU WIN!!", getWidth()/2,getHeight()/2);
+      break;
+      default:
+      break;
+    }
+    drawStringCenter(g,"Press any key to continue...", getWidth()/2,getHeight()/2 +15);
   }
   //再描画用
   public void update(){

@@ -107,9 +107,6 @@ public class BlackJack extends JFrame implements KeyListener{
     }
   }
   //KeyListenerをimplement
-  public void keyPressed(KeyEvent e){
-
-  }
   //連打対策で、keyreleasedで処理。
   public void keyReleased(KeyEvent e){
     //スタート画面の時
@@ -136,7 +133,9 @@ public class BlackJack extends JFrame implements KeyListener{
       c.repaint();
     }
   }
+  public void keyPressed(KeyEvent e){
 
+  }
   public void keyTyped(KeyEvent e){
 
   }
