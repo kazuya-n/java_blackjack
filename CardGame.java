@@ -6,7 +6,6 @@ import java.util.Random;
 import java.util.ArrayList;
 
 public class CardGame extends JPanel{
-  Image img[] = new Image[6];
   //それぞれのカードの枚数
   public int myCardNum;
   public int pairCardNum;
@@ -72,14 +71,14 @@ public class CardGame extends JPanel{
   }
 
   //各画面ごとの処理
-  public void startView(Graphics g,Color bg, Color cha){
+  private void startView(Graphics g,Color bg, Color cha){
     g.setColor(bg);
     g.fillRect(0,0,getWidth(), getHeight());
     g.setColor(cha);
     drawStringCenter(g,"BlackJack!!",getWidth()/2,getHeight()/2);
     drawStringCenter(g,"press any key to start",getWidth()/2,getHeight()/2+15);
   }
-  public void gameView(Graphics g,Color bg, Color cha){
+  private void gameView(Graphics g,Color bg, Color cha){
     g.setColor(bg);
     g.fillRect(0,0,getWidth(), getHeight());
     g.setColor(cha);
@@ -88,7 +87,7 @@ public class CardGame extends JPanel{
     g.drawString("Press Down to Stand.",200,210);
     drawTrump(g);
   }
-  public void resultView(Graphics g,Color bg, Color cha){
+  private void resultView(Graphics g,Color bg, Color cha){
     //ペアのカードも全部表向きに
     for (int i = 0; i < pairCardNum; i++) {
       pairCards.get(i).front = true;
@@ -137,7 +136,7 @@ public class CardGame extends JPanel{
         x -= 100;
       }
     }
-    g.drawImage(img[1], x,0, null);
+    //g.drawImage(img[1], x,0, null);
   }
 
   private void drawStringCenter(Graphics g,String text,int x,int y){

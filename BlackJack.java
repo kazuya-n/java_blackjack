@@ -25,7 +25,7 @@ public class BlackJack extends JFrame implements KeyListener{
     f.addKeyListener(new BlackJack());
   }
   //新規ゲーム
-  public static void newGame(){
+  private static void newGame(){
     //カードを初期化
     c.view = 0;
     c.myCards.clear();
@@ -37,7 +37,7 @@ public class BlackJack extends JFrame implements KeyListener{
     c.myCardSum = countSum(c.myCards,c.myCardNum);
     c.pairCardSum = countSum(c.pairCards,c.pairCardNum);
   }
-  public static int countSum(ArrayList<Card> cards,int cardNums){
+  private static int countSum(ArrayList<Card> cards,int cardNums){
     int sum = 0;
     for(int i=0;i<cardNums;i++){
       sum += cards.get(i).cardNum;
