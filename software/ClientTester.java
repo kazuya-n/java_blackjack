@@ -3,6 +3,7 @@ public class ClientTester{
     JabberClient c = new JabberClient();
     try{
       c.send("おはよう");
+      c.send("眠い");
     }catch(Exception e){
       e.printStackTrace();
     }

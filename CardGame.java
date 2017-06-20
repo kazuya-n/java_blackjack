@@ -47,6 +47,11 @@ public class CardGame extends JPanel{
       pairCards.get(nums-1).front = true;
     }
   }
+  //相手の手札を通信で受け取って手札のデータに追加する
+  public void connectionCard(int primaryNum){
+    pairCards.add(new Card(primaryNum));
+    pairCards.get(0).front = true;
+  }
 
   // 画面描画
   public void paintComponent(Graphics g) {
@@ -78,6 +83,7 @@ public class CardGame extends JPanel{
     drawStringCenter(g,"BlackJack!!",getWidth()/2,getHeight()/2);
     drawStringCenter(g,"press any key to start",getWidth()/2,getHeight()/2+15);
   }
+
   private void gameView(Graphics g,Color bg, Color cha){
     g.setColor(bg);
     g.fillRect(0,0,getWidth(), getHeight());
@@ -87,6 +93,7 @@ public class CardGame extends JPanel{
     g.drawString("Press Down to Stand.",200,210);
     drawTrump(g);
   }
+
   private void resultView(Graphics g,Color bg, Color cha){
     //ペアのカードも全部表向きに
     for (int i = 0; i < pairCardNum; i++) {
@@ -113,7 +120,9 @@ public class CardGame extends JPanel{
     drawStringCenter(g,"Press any key to continue...", getWidth()/2,getHeight()/2 +15);
   }
   //再描画用
-  public void update(){
+  public void reupdate(){
+    System.out.println("update called");
+    System.out.println("Is EDT : " + SwingUtilities.isEventDispatchThread());
     repaint();
   }
 
@@ -123,6 +132,7 @@ public class CardGame extends JPanel{
     //自分のカード
     for (i = 0; i < myCardNum; i++) {
       g.drawImage(myCards.get(i).cardImg[0], x,700-300, null);
+      System.out.println("drew : "+myCards.get(i).primaryNum);
       x += 100;
     }
     //相手のカード

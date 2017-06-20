@@ -30,7 +30,9 @@ public class JabberServer extends Thread{
           socket[i].getOutputStream())), true);
         }
         out[0].println("senkou");
+        System.out.println("Sended : Player 0 is Senkou");
         out[1].println("koukou");
+        System.out.println("Sended : Player 1 is Koukou");
         while(true){
           autoCommunicate();
           try{
@@ -62,11 +64,15 @@ public class JabberServer extends Thread{
     while(true){
       try{
         if((r0 = st[0].data)!=null){
+          System.out.println("Player 0 to 1 : " + r0);
           out[1].println(r0);
+          st[0].data = null;
         }
         r1 = st[1].data;
         if((r1 = st[1].data)!=null){
+          System.out.println("Player 1 to 0 : " + r1);
           out[0].println(r1);
+          st[1].data = null;
         }
         Thread.sleep(50);
       } catch (Exception ex) {

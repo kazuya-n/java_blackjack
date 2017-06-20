@@ -7,15 +7,30 @@ import java.awt.event.*;
 
 public class BlackJack extends JFrame implements KeyListener{
   public static CardGame c;
+  public static JabberClient jc;
+  public static boolean senkou;
+  public static JFrame f;
   BlackJack(){
     addKeyListener(this);
   }
   public static void main(String[] args) {
     //起動時の初期化処理
     c = new CardGame();
+    jc = new JabberClient();
+    try{
+      if((jc.receive()).equals("senkou")){
+        senkou = true;
+        System.out.println("senkou");
+      } else {
+        senkou = false;
+        System.out.println("koukou");
+      }
+    } catch (Exception e){
+      e.printStackTrace();
+    }
     newGame();
     // ウィンドウの作成と表示
-    JFrame f = new JFrame("BlackJack");
+    f = new JFrame("BlackJack");
     f.getContentPane().setLayout(new FlowLayout());
     f.getContentPane().add(c);
     f.pack();
@@ -31,9 +46,24 @@ public class BlackJack extends JFrame implements KeyListener{
     c.myCards.clear();
     c.pairCards.clear();
     c.myCardNum = 1;
-    c.pairCardNum = 2;
-    c.deal_Card(true,1);
-    c.deal_Card(false,2);
+    c.pairCardNum = 1;
+    if(senkou){
+      try{
+        c.deal_Card(true,1);
+        jc.send(String.valueOf(c.myCards.get(0).primaryNum));
+        c.connectionCard(Integer.parseInt((jc.receive())));
+      } catch (Exception e){
+        e.printStackTrace();
+      }
+    } else {
+      try{
+        c.connectionCard(Integer.parseInt((jc.receive())));
+        c.deal_Card(true,1);
+        jc.send(String.valueOf(c.myCards.get(0).primaryNum));
+      } catch (Exception e){
+        e.printStackTrace();
+      }
+    }
     c.myCardSum = countSum(c.myCards,c.myCardNum);
     c.pairCardSum = countSum(c.pairCards,c.pairCardNum);
   }
@@ -45,36 +75,131 @@ public class BlackJack extends JFrame implements KeyListener{
     return sum;
   }
 
+  public static void waitPair(){
+
+    try{
+      Thread.sleep(50);
+    }catch(Exception e){
+      e.printStackTrace();
+    }
+    System.out.println("Called waitPair() : waiting...");
+    String rc = new String("");
+    try{
+      if(!((rc=jc.receive()).equals("Stand"))){
+        c.connectionCard(Integer.parseInt(rc));
+      }
+    } catch (Exception e){
+      e.printStackTrace();
+    }
+    System.out.println("received...");
+    c.pairCardNum++;
+    c.pairCardSum = countSum(c.pairCards,c.pairCardNum);
+    c.reupdate();
+  }
+
   //ヒット、スタンドの処理
   private void myHit(){
-    if(c.myCardSum>=21) myStand();
+    System.out.println("Called myHit()");
     c.myCardNum++;
     c.deal_Card(true,1);
     c.myCardSum = countSum(c.myCards,c.myCardNum);
     //カードの合計が21以上だったらスタンド
-    if(c.myCardSum>=21) myStand();
+    // if(c.myCardSum>=21){
+    //   System.out.println("Burst!!");
+    //   myStand();
+    // }
     c.repaint();
-  }
-
-  private void dealer(){
-    //ディーラーは、16点以下なら必ずヒット
-    //17点以上なら必ずスタンド
-    while(c.pairCardSum<17){
-      pairHit();
-    }
-    pairStand();
   }
 
   private void pairHit(){
-    c.pairCardNum++;
-    c.deal_Card(false,1);
+    while(true){
+      String r = new String("");
+      // r = jc.receive();
+      if(r.equals("END")) break;
+      c.pairCards.add(new Card(Integer.parseInt(r)));
+      c.pairCardNum++;
+    }
     c.pairCardSum = countSum(c.pairCards,c.pairCardNum);
     c.repaint();
+    return;
   }
 
   //スタンドの処理。
   private void myStand(){
-    dealer();
+    //dealer();
+    c.repaint();
+    if(senkou){
+      try{
+        jc.send("Stand");
+        if(jc.receive().equals("Stand")){
+          shareCards();
+        }
+      }catch (Exception e){
+          e.printStackTrace();
+      }
+    }else{
+      try{
+        if(jc.receive().equals("Stand")){
+          jc.send("Stand");
+          shareCards();
+        }
+      } catch (Exception e){
+        e.printStackTrace();
+      }
+    }
+  }
+
+  private void shareCards(){
+    if(senkou){
+      try{
+        StringBuilder sendStr = new StringBuilder();
+        sendStr.append(String.valueOf(c.myCardNum));
+        for(int i = 0;i<c.myCardNum;i++){
+          sendStr.append(",");
+          sendStr.append(String.valueOf(c.myCards.get(i).primaryNum));
+        }
+        jc.send(sendStr.toString() );
+        System.out.println("sent String ..." + sendStr);
+
+        String receiveStr = jc.receive();
+        System.out.println("receive String ..." + receiveStr);
+        String[] query = receiveStr.split(",", 0);
+        c.pairCardNum = Integer.parseInt(query[0]);
+        System.out.println("Koukou Card Number : " + c.pairCardNum);
+        for(int i = 2; i <= c.pairCardNum; i++){
+          c.connectionCard(Integer.parseInt(query[i]));
+          System.out.println("received card num ..." + query[i]);
+        }
+      } catch (Exception e){
+        e.printStackTrace();
+      }
+    } else {
+      try{
+        String receiveStr = jc.receive();
+        System.out.println("receive String ..." + receiveStr);
+        String[] query = receiveStr.split(",", 0);
+        c.pairCardNum = Integer.parseInt(query[0]);
+        System.out.println("Koukou Card Number : " + c.pairCardNum);
+        for(int i = 2; i <= c.pairCardNum; i++){
+          c.connectionCard(Integer.parseInt(query[i]));
+          System.out.println("received card num ..." + query[i]);
+        }
+
+        StringBuilder sendStr = new StringBuilder();
+        sendStr.append(String.valueOf(c.myCardNum));
+        for(int i = 0;i<c.myCardNum;i++){
+          sendStr.append(",");
+          sendStr.append(String.valueOf(c.myCards.get(i).primaryNum));
+        }
+        jc.send(sendStr.toString() );
+        System.out.println("sent String ..." + sendStr);
+
+      } catch (Exception e){
+        e.printStackTrace();
+      }
+    }
+    c.pairCardSum = countSum(c.pairCards,c.pairCardNum);
+    result();
   }
 
   private void pairStand(){

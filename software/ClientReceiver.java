@@ -3,6 +3,7 @@ public class ClientReceiver{
     JabberClient c = new JabberClient();
     try{
       System.out.println(c.receive());
+      System.out.println(c.receive());
     }catch(Exception e){
     }
   }
