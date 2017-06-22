@@ -45,6 +45,8 @@ public class BlackJack extends JFrame implements KeyListener{
     c.view = 0;
     c.myCards.clear();
     c.pairCards.clear();
+    c.is_Burst = false;
+    c.is_BJ = false;
     c.myCardNum = 1;
     c.pairCardNum = 1;
     if(senkou){
@@ -104,10 +106,15 @@ public class BlackJack extends JFrame implements KeyListener{
     c.deal_Card(true,1);
     c.myCardSum = countSum(c.myCards,c.myCardNum);
     //カードの合計が21以上だったらスタンド
-    // if(c.myCardSum>=21){
-    //   System.out.println("Burst!!");
-    //   myStand();
-    // }
+    if(c.myCardSum>=21){
+      if(c.myCardSum > 21){
+        System.out.println("Burst!!");
+        c.is_Burst = true;
+      } else {
+        c.is_BJ = true;
+      }
+      c.repaint();
+    }
     c.repaint();
   }
 
@@ -243,8 +250,13 @@ public class BlackJack extends JFrame implements KeyListener{
     //プレイ中の時
     else if(c.view==1){
       int key = e.getKeyCode();
+
       if(key == KeyEvent.VK_UP){
-        myHit();
+        if(c.myCardSum>=21){
+          myStand();
+        } else {
+          myHit();
+        }
       }
       if(key == KeyEvent.VK_DOWN){
         myStand();

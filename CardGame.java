@@ -16,6 +16,8 @@ public class CardGame extends JPanel{
   //-1だったら負け、0だったら引き分け、1だったら勝ち
   public int isWin;
 
+  public boolean is_Burst;
+  public boolean is_BJ;
   //画面遷移用
   //0...起動画面
   //1...プレイ画面
@@ -33,7 +35,6 @@ public class CardGame extends JPanel{
   }
   public void deal_Card(boolean is_mine,int nums){
     Random rnd = new Random();
-
     if(is_mine){
       for(int i=0;i<nums;i++){
         myCards.add(new Card(rnd.nextInt(51)));
@@ -80,8 +81,15 @@ public class CardGame extends JPanel{
     g.setColor(bg);
     g.fillRect(0,0,getWidth(), getHeight());
     g.setColor(cha);
-    drawStringCenter(g,"BlackJack!!",getWidth()/2,getHeight()/2);
-    drawStringCenter(g,"press any key to start",getWidth()/2,getHeight()/2+15);
+    // drawStringCenter(g,"BlackJack!!",getWidth()/2,getHeight()/2);
+    Image titleImg[] = new Image[1];
+    try {
+      titleImg[0] = ImageIO.read(new File("./BlackJack-logo.png"));
+    } catch (Exception e){
+      e.printStackTrace();
+    }
+    g.drawImage(titleImg[0], getWidth()/2 - 200 ,getHeight()/2 - 200, null);
+    drawStringCenter(g,"press any key to start",getWidth()/2,getHeight()/2+150);
   }
 
   private void gameView(Graphics g,Color bg, Color cha){
@@ -89,8 +97,18 @@ public class CardGame extends JPanel{
     g.fillRect(0,0,getWidth(), getHeight());
     g.setColor(cha);
     g.drawString("現在の合計 : " + myCardSum, 200, 170);
-    g.drawString("Press Up to HIT.",200,190);
-    g.drawString("Press Down to Stand.",200,210);
+    if(!is_Burst && !is_BJ){
+      g.drawString("Press Up to HIT.",200,190);
+      g.drawString("Press Down to Stand.",200,210);
+    }
+    if(is_Burst){
+      g.drawString("BURST!!",250,190);
+      g.drawString("Press Up or Down to continue...",200,210);
+    }
+    if(is_BJ){
+      g.drawString("BLACKJACK!!",250,190);
+      g.drawString("Press Up or Down to continue...",200,210);
+    }
     drawTrump(g);
   }
 
