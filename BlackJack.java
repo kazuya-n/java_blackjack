@@ -4,19 +4,24 @@ import java.io.*;
 import javax.imageio.*;
 import java.util.ArrayList;
 import java.awt.event.*;
+import java.applet.Applet;
+import java.applet.AudioClip;
+
 
 public class BlackJack extends JFrame implements KeyListener{
   public static CardGame c;
   public static JabberClient jc;
   public static boolean senkou;
   public static JFrame f;
-  BlackJack(){
+  public static String addr;
+  BlackJack(String ar){
     addKeyListener(this);
+    addr = ar;
   }
-  public static void main(String[] args) {
+  public static void launch(){
     //起動時の初期化処理
     c = new CardGame();
-    jc = new JabberClient();
+    jc = new JabberClient(addr);
     try{
       if((jc.receive()).equals("senkou")){
         senkou = true;
@@ -37,7 +42,7 @@ public class BlackJack extends JFrame implements KeyListener{
     f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     f.setResizable(false);
     f.setVisible(true);
-    f.addKeyListener(new BlackJack());
+    f.addKeyListener(new BlackJack(addr));
   }
   //新規ゲーム
   private static void newGame(){
@@ -47,6 +52,7 @@ public class BlackJack extends JFrame implements KeyListener{
     c.pairCards.clear();
     c.is_Burst = false;
     c.is_BJ = false;
+    c.is_Stand = false;
     c.myCardNum = 1;
     c.pairCardNum = 1;
     if(senkou){
@@ -101,6 +107,8 @@ public class BlackJack extends JFrame implements KeyListener{
 
   //ヒット、スタンドの処理
   private void myHit(){
+    AudioClip audioClip = Applet.newAudioClip(BlackJack.class.getResource("./enter.wav"));
+    audioClip.play();
     System.out.println("Called myHit()");
     c.myCardNum++;
     c.deal_Card(true,1);
@@ -133,7 +141,9 @@ public class BlackJack extends JFrame implements KeyListener{
 
   //スタンドの処理。
   private void myStand(){
-    //dealer();
+    AudioClip audioClip = Applet.newAudioClip(BlackJack.class.getResource("./back.wav"));
+    audioClip.play();
+    c.is_Stand = true;
     c.repaint();
     if(senkou){
       try{
@@ -244,6 +254,8 @@ public class BlackJack extends JFrame implements KeyListener{
     //スタート画面の時
     if(c.view==0){
       //何かキーが押されたらゲーム画面へ
+      AudioClip audioClip = Applet.newAudioClip(BlackJack.class.getResource("./enter.wav"));
+      audioClip.play();
       c.view=1;
       c.repaint();
     }
@@ -265,6 +277,8 @@ public class BlackJack extends JFrame implements KeyListener{
     //結果発表の時
     else if(c.view==2){
       //何かキーが押されたら初期化してゲーム画面へ
+      AudioClip audioClip = Applet.newAudioClip(BlackJack.class.getResource("./enter.wav"));
+      audioClip.play();
       newGame();
       c.view=1;
       c.repaint();

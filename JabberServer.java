@@ -9,8 +9,11 @@ public class JabberServer extends Thread{
   public static final int PORT = 8901;
   public static void main(String[] args)
   throws IOException  {
+    System.out.println("Launching...");
     ServerSocket send = new ServerSocket(PORT);
     try{
+      InetAddress a = InetAddress.getLocalHost();
+      System.out.println("IP Address     : " + a.getHostAddress());
       //ソケット通信受付
       socket[0] = send.accept();
       System.out.println("Player1 accepted");

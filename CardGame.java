@@ -5,6 +5,7 @@ import javax.imageio.*;
 import java.util.Random;
 import java.util.ArrayList;
 
+
 public class CardGame extends JPanel{
   //それぞれのカードの枚数
   public int myCardNum;
@@ -15,7 +16,7 @@ public class CardGame extends JPanel{
 
   //-1だったら負け、0だったら引き分け、1だったら勝ち
   public int isWin;
-
+  public boolean is_Stand;
   public boolean is_Burst;
   public boolean is_BJ;
   //画面遷移用
@@ -108,6 +109,10 @@ public class CardGame extends JPanel{
     if(is_BJ){
       g.drawString("BLACKJACK!!",250,190);
       g.drawString("Press Up or Down to continue...",200,210);
+    }
+    if(is_Stand){
+      g.drawString("STAND",250,190);
+      g.drawString("Waiting for pair.",200,210);
     }
     drawTrump(g);
   }

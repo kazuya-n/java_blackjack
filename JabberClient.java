@@ -5,9 +5,9 @@ public class JabberClient{
 	Socket socket;
 	BufferedReader in;
 	PrintWriter out;
-	JabberClient(){
+	JabberClient(String ar){
 		try{
-			InetAddress addr = InetAddress.getByName("localhost");
+			InetAddress addr = InetAddress.getByName(ar);
 			System.out.println("addr = " + addr);
 			socket = new Socket(addr, 8901);
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
